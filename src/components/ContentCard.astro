@@ -5,9 +5,10 @@ interface Props {
   href: string;
   meta?: string;
   tags?: string[];
+  lang?: string;
 }
 
-const { title, description, href, meta, tags = [] } = Astro.props;
+const { title, description, href, meta, tags = [], lang = "en" } = Astro.props;
 ---
 
 <article class="card">
@@ -18,7 +19,7 @@ const { title, description, href, meta, tags = [] } = Astro.props;
     tags.length > 0 && (
       <div class="tag-row">
         {tags.map((tag) => (
-          <a class="tag" href={`/tags/${encodeURIComponent(tag)}/`}>
+          <a class="tag" href={`/${lang}/tags/${encodeURIComponent(tag)}/`}>
             {tag}
           </a>
         ))}

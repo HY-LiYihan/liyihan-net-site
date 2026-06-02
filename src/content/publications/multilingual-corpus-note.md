@@ -5,6 +5,9 @@ authors:
 venue: "Research Note"
 year: 2025
 description: "A sample publication note for multilingual corpus and evaluation materials."
+lang: en
+routeSlug: multilingual-corpus-note
+translationKey: multilingual-corpus-note
 tags:
   - multilingual
   - corpus

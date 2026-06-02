@@ -73,6 +73,15 @@ docker run --rm -p 8080:80 liyihan-net:local
 http://localhost:8080
 ```
 
+正式内容入口为：
+
+```text
+http://localhost:8080/en/
+http://localhost:8080/zh/
+```
+
+根路径 `/` 会自动选择默认语言：部署在 Cloudflare 后面时，Nginx 会优先读取 `CF-IPCountry` 请求头；没有该头时，根页面会用客户端 IP 地理位置 API 和浏览器语言作为兜底。
+
 也可以使用 Compose：
 
 ```bash

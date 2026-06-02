@@ -1,0 +1,27 @@
+---
+import { getCollection, render } from "astro:content";
+import ContentLayout from "../../../layouts/ContentLayout.astro";
+import { entrySlug, isLang, languages, type Lang } from "../../../i18n";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return languages.flatMap((lang: Lang) =>
+    posts
+      .filter((entry) => !entry.data.draft && entry.data.lang === lang)
+      .map((entry) => ({ params: { lang, slug: entrySlug(entry) }, props: { entry } })),
+  );
+}
+
+const lang: Lang = isLang(Astro.params.lang) ? Astro.params.lang : "en";
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<ContentLayout
+  lang={lang}
+  title={entry.data.title}
+  description={entry.data.description}
+  date={entry.data.date}
+>
+  <Content />
+</ContentLayout>

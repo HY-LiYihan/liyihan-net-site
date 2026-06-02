@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { isLang, languages, type Lang, ui } from "../../i18n";
+
+export function getStaticPaths() {
+  return languages.map((lang) => ({ params: { lang } }));
+}
+
+const lang: Lang = isLang(Astro.params.lang) ? Astro.params.lang : "en";
+const t = ui[lang];
+---
+
+<BaseLayout lang={lang} title={t.sections.search} description={lang === "zh" ? "搜索 liyihan.net。" : "Search liyihan.net."}>
+  <section class="section prose">
+    <p class="eyebrow">{t.sections.search}</p>
+    <h1>{t.sections.search}</h1>
+    <p class="lede">{lang === "zh" ? "搜索索引由 Pagefind 在静态构建后生成。" : "Search is indexed by Pagefind after the static build."}</p>
+    <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+    <script src="/pagefind/pagefind-ui.js" is:inline></script>
+    <div id="search" class="search-box"></div>
+    <script is:inline>
+      window.addEventListener("DOMContentLoaded", () => {
+        if (window.PagefindUI) {
+          new window.PagefindUI({ element: "#search", showSubResults: true });
+        }
+      });
+    </script>
+  </section>
+</BaseLayout>

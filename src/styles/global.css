@@ -69,6 +69,14 @@ iframe {
   font-weight: 760;
   text-decoration: none;
   letter-spacing: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.brand small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 600;
 }
 
 .nav-links {

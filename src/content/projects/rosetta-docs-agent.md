@@ -2,6 +2,9 @@
 title: "Rosetta Docs Agent"
 description: "A documentation automation project entry for agent-assisted technical writing."
 date: 2026-05-28
+lang: en
+routeSlug: rosetta-docs-agent
+translationKey: rosetta-docs-agent
 tags:
   - documentation
   - agents

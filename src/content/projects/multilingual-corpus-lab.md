@@ -2,6 +2,9 @@
 title: "Multilingual Corpus Lab"
 description: "A project slot for multilingual corpus construction, analysis, and evaluation workflows."
 date: 2026-06-01
+lang: en
+routeSlug: multilingual-corpus-lab
+translationKey: multilingual-corpus-lab
 tags:
   - corpus
   - multilingual

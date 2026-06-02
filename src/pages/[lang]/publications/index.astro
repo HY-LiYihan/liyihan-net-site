@@ -1,0 +1,40 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ContentCard from "../../../components/ContentCard.astro";
+import { entrySlug, isLang, languages, type Lang, ui } from "../../../i18n";
+
+export function getStaticPaths() {
+  return languages.map((lang) => ({ params: { lang } }));
+}
+
+const lang: Lang = isLang(Astro.params.lang) ? Astro.params.lang : "en";
+const t = ui[lang];
+const publications = (await getCollection("publications"))
+  .filter((entry) => entry.data.lang === lang)
+  .sort((a, b) => b.data.year - a.data.year);
+---
+
+<BaseLayout lang={lang} title={t.sections.publications} description={lang === "zh" ? "论文、投稿和研究成果。" : "Selected publications and papers."}>
+  <section class="section">
+    <p class="eyebrow">{lang === "zh" ? "研究成果" : "Research output"}</p>
+    <h1>{t.sections.publications}</h1>
+    <p class="lede">
+      {lang === "zh" ? "从旧站 CV 迁移真实论文条目，并保留后续补充 PDF、代码和项目页的结构。" : "Publication entries migrated from the previous CV, with room for paper links, code, and project pages."}
+    </p>
+    <div class="list">
+      {
+        publications.map((entry) => (
+          <ContentCard
+            lang={lang}
+            title={entry.data.title}
+            description={entry.data.description}
+            href={`/${lang}/publications/${entrySlug(entry)}/`}
+            meta={`${entry.data.venue}, ${entry.data.year} · ${entry.data.authors.join(", ")}`}
+            tags={entry.data.tags}
+          />
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

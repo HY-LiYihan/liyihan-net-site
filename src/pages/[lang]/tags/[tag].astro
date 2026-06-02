@@ -1,0 +1,73 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ContentCard from "../../../components/ContentCard.astro";
+import { entrySlug, isLang, languages, type Lang, ui } from "../../../i18n";
+
+export async function getStaticPaths() {
+  const paths = [];
+  const blog = await getCollection("blog");
+  const projects = await getCollection("projects");
+  const publications = await getCollection("publications");
+
+  for (const lang of languages) {
+    const entries = [
+      ...blog
+        .filter((entry) => !entry.data.draft && entry.data.lang === lang)
+        .map((entry) => ({ ...entry, section: "blog" })),
+      ...projects
+        .filter((entry) => !entry.data.draft && entry.data.lang === lang)
+        .map((entry) => ({ ...entry, section: "projects" })),
+      ...publications
+        .filter((entry) => entry.data.lang === lang)
+        .map((entry) => ({ ...entry, section: "publications" })),
+    ];
+    const tags = new Set<string>();
+    for (const entry of entries) {
+      entry.data.tags.forEach((tag) => tags.add(tag));
+    }
+    for (const tag of tags) {
+      paths.push({ params: { lang, tag } });
+    }
+  }
+  return paths;
+}
+
+const lang: Lang = isLang(Astro.params.lang) ? Astro.params.lang : "en";
+const tag = Astro.params.tag ?? "";
+const t = ui[lang];
+const blog = await getCollection("blog");
+const projects = await getCollection("projects");
+const publications = await getCollection("publications");
+const entries = [
+  ...blog
+    .filter((entry) => !entry.data.draft && entry.data.lang === lang)
+    .map((entry) => ({ ...entry, section: "blog" })),
+  ...projects
+    .filter((entry) => !entry.data.draft && entry.data.lang === lang)
+    .map((entry) => ({ ...entry, section: "projects" })),
+  ...publications
+    .filter((entry) => entry.data.lang === lang)
+    .map((entry) => ({ ...entry, section: "publications" })),
+].filter((entry) => entry.data.tags.includes(tag));
+---
+
+<BaseLayout lang={lang} title={`${t.sections.tag}: ${tag}`} description={`${t.sections.tag}: ${tag}`}>
+  <section class="section">
+    <p class="eyebrow">{t.sections.tag}</p>
+    <h1>{tag}</h1>
+    <div class="list">
+      {
+        entries.map((entry) => (
+          <ContentCard
+            lang={lang}
+            title={entry.data.title}
+            description={entry.data.description}
+            href={`/${lang}/${entry.section}/${entrySlug(entry)}/`}
+            tags={entry.data.tags}
+          />
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

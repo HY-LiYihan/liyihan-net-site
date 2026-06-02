@@ -7,19 +7,30 @@ const shared = z.object({
   description: z.string(),
   date: z.coerce.date(),
   updated: z.coerce.date().optional(),
+  lang: z.enum(["en", "zh"]).default("en"),
+  routeSlug: z.string().optional(),
+  translationKey: z.string().optional(),
   tags: z.array(z.string()).default([]),
   draft: z.boolean().default(false),
 });
 
 const blog = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/blog" }),
+  loader: glob({
+    pattern: "**/*.{md,mdx}",
+    base: "./src/content/blog",
+    generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
+  }),
   schema: shared.extend({
     type: z.enum(["blog", "note"]).default("blog"),
   }),
 });
 
 const projects = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/projects" }),
+  loader: glob({
+    pattern: "**/*.{md,mdx}",
+    base: "./src/content/projects",
+    generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
+  }),
   schema: shared.extend({
     repo: z.url().optional(),
     demo: z.url().optional(),
@@ -29,13 +40,20 @@ const projects = defineCollection({
 });
 
 const publications = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/publications" }),
+  loader: glob({
+    pattern: "**/*.{md,mdx}",
+    base: "./src/content/publications",
+    generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
+  }),
   schema: z.object({
     title: z.string(),
     authors: z.array(z.string()),
     venue: z.string(),
     year: z.number(),
     description: z.string(),
+    lang: z.enum(["en", "zh"]).default("en"),
+    routeSlug: z.string().optional(),
+    translationKey: z.string().optional(),
     tags: z.array(z.string()).default([]),
     paper: z.string().optional(),
     code: z.url().optional(),

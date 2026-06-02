@@ -1,0 +1,37 @@
+---
+title: "使用 Astro、MDX 和 Docker 构建学术网站"
+description: "一篇实现笔记：如何让个人学术网站同时具备可维护内容、组件化展示和容器化部署。"
+date: 2026-06-03
+lang: zh
+routeSlug: astro-mdx-docker
+translationKey: astro-mdx-docker
+tags:
+  - astro
+  - mdx
+  - docker
+type: "blog"
+---
+
+import ResearchCounter from "../../components/ResearchCounter";
+import VideoEmbed from "../../components/VideoEmbed.astro";
+
+Astro 负责静态构建，MDX 让文章可以直接嵌入组件，Docker 则把最终站点变成一个可复制部署的镜像。
+
+## 为什么使用 MDX
+
+普通 Markdown 很适合写作，但当页面需要交互 demo、视频、图表或局部组件时，MDX 会更合适。
+
+<ResearchCounter client:load />
+
+## 嵌入媒体
+
+重复使用的视频、图表和交互内容应封装成组件。
+
+<VideoEmbed
+  title="示例研究视频嵌入"
+  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+/>
+
+## 部署模型
+
+生产环境不运行 Node 服务。Docker 构建阶段生成 `dist/`，Pagefind 建立静态搜索索引，最终由 Nginx 托管。

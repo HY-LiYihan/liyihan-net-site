@@ -1,41 +1,54 @@
 ---
 import "../styles/global.css";
+import { defaultLang, switchLangPath, type Lang, ui } from "../i18n";
 
 interface Props {
   title?: string;
   description?: string;
+  lang?: Lang;
 }
 
 const {
-  title = "Li Yihan",
-  description = "Academic portfolio, publications, projects, and research notes.",
+  lang = defaultLang,
+  title,
+  description,
 } = Astro.props;
 
-const pageTitle = title === "Li Yihan" ? title : `${title} | Li Yihan`;
+const t = ui[lang];
+const pageTitle = title ? `${title} | ${t.siteTitle}` : t.siteTitle;
+const pageDescription = description ?? t.description;
+const otherLang = lang === "en" ? "zh" : "en";
+const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={t.htmlLang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
+    <meta name="description" content={pageDescription} />
     <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
+    <link rel="alternate" hreflang="en" href={switchLangPath(currentPath, "en")} />
+    <link rel="alternate" hreflang="zh-CN" href={switchLangPath(currentPath, "zh")} />
     <title>{pageTitle}</title>
   </head>
   <body>
     <div class="site-shell">
       <header class="site-header">
         <nav class="nav" aria-label="Primary navigation">
-          <a class="brand" href="/">Li Yihan</a>
+          <a class="brand" href={`/${lang}/`}>
+            <span>{t.brand}</span>
+            <small>{t.subtitle}</small>
+          </a>
           <div class="nav-links">
-            <a href="/cv/">CV</a>
-            <a href="/publications/">Publications</a>
-            <a href="/projects/">Projects</a>
-            <a href="/blog/">Blog</a>
-            <a href="/search/">Search</a>
+            <a href={`/${lang}/cv/`}>{t.nav.cv}</a>
+            <a href={`/${lang}/publications/`}>{t.nav.publications}</a>
+            <a href={`/${lang}/projects/`}>{t.nav.projects}</a>
+            <a href={`/${lang}/blog/`}>{t.nav.blog}</a>
+            <a href={`/${lang}/search/`}>{t.nav.search}</a>
+            <a href={switchLangPath(currentPath, otherLang)}>{otherLang === "zh" ? "中文" : "English"}</a>
           </div>
         </nav>
       </header>
@@ -44,8 +57,8 @@ const pageTitle = title === "Li Yihan" ? title : `${title} | Li Yihan`;
       </main>
       <footer class="site-footer">
         <div class="footer-inner">
-          <span>© {new Date().getFullYear()} Li Yihan</span>
-          <span>Built with Astro, MDX, and Docker.</span>
+          <span>© {new Date().getFullYear()} {t.fullName} / {t.nativeName}</span>
+          <span>{t.footer}</span>
         </div>
       </footer>
     </div>

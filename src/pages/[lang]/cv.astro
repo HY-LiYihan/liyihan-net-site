@@ -1,0 +1,93 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { isLang, languages, type Lang, ui } from "../../i18n";
+
+export function getStaticPaths() {
+  return languages.map((lang) => ({ params: { lang } }));
+}
+
+const lang: Lang = isLang(Astro.params.lang) ? Astro.params.lang : "en";
+const t = ui[lang];
+---
+
+<BaseLayout lang={lang} title={t.cv.title} description={t.cv.lede}>
+  <section class="section prose">
+    <p class="eyebrow">{t.cv.eyebrow}</p>
+    <h1>{t.cv.title}</h1>
+    <p class="lede">{t.cv.lede}</p>
+
+    <h2>{t.cv.profileTitle}</h2>
+    <p>{t.cv.profile}</p>
+
+    <h2>{t.cv.educationTitle}</h2>
+    <p>{t.cv.education}</p>
+
+    {
+      lang === "zh" ? (
+        <>
+          <h2>论文与科研</h2>
+          <ul>
+            <li>OmniTrav：360° 视觉可通行性数据集与基准，IROS 2026 submitted。</li>
+            <li>RAPID Hand：感知融合灵巧操作平台，NeurIPS 2025。</li>
+            <li>Unordered Landmark Visual Navigation，ECCV 2026 submitted。</li>
+            <li>面向学术语篇的 LLM 自动标注研究，广东省哲学社会科学规划项目 2025。</li>
+          </ul>
+
+          <h2>项目与经历</h2>
+          <ul>
+            <li>中山大学 RoboTech 机器人协会会长、竞赛队队长。</li>
+            <li>RoboMaster 视觉系统开发：EKF 自瞄、YOLO 装甲板分类、TensorRT/OpenVINO。</li>
+            <li>复杂场景越野车自主导航与机械臂精准抓取系统。</li>
+            <li>基于 Mesh 组网与 GNSS RTK 的无人机集群飞行。</li>
+            <li>GenreShift：基于计量语言学与 LLM 的智能体裁转换系统。</li>
+          </ul>
+
+          <h2>荣誉</h2>
+          <ul>
+            <li>中国机器人及人工智能大赛国家一等奖，队长，2025。</li>
+            <li>全国智能无人系统应用挑战赛全国总冠军，队长，2025。</li>
+            <li>全国大学生电子设计竞赛国家二等奖，队长，2025。</li>
+            <li>RoboMaster 高校联盟赛国家二等奖，视觉组组长，2025。</li>
+            <li>美国大学生数学建模竞赛 MCM Honorable Mention，队长，2024。</li>
+          </ul>
+        </>
+      ) : (
+        <>
+          <h2>Publications and Research</h2>
+          <ul>
+            <li>OmniTrav: 360° vision-based traversability dataset and benchmark, IROS 2026 submitted.</li>
+            <li>RAPID Hand: perception-integrated dexterous manipulation platform, NeurIPS 2025.</li>
+            <li>Unordered Landmark Visual Navigation, ECCV 2026 submitted.</li>
+            <li>LLM-assisted annotation for academic discourse, Guangdong Philosophy and Social Science Planning Project 2025.</li>
+          </ul>
+
+          <h2>Projects and Experience</h2>
+          <ul>
+            <li>President and competition team captain, SYSU RoboTech Robotics Association.</li>
+            <li>RoboMaster vision system: EKF auto-aiming, YOLO armor classification, TensorRT/OpenVINO.</li>
+            <li>Autonomous off-road navigation and precise robotic-arm grasping in complex scenes.</li>
+            <li>UAV swarm flight with Mesh networking and GNSS RTK.</li>
+            <li>GenreShift: intelligent genre transformation with quantitative linguistics and LLMs.</li>
+          </ul>
+
+          <h2>Awards</h2>
+          <ul>
+            <li>National First Prize, China Robotics and Artificial Intelligence Competition, captain, 2025.</li>
+            <li>National Champion, Intelligent Unmanned Systems Application Challenge, captain, 2025.</li>
+            <li>National Second Prize, National Undergraduate Electronics Design Contest, captain, 2025.</li>
+            <li>National Second Prize, RoboMaster University League, vision lead, 2025.</li>
+            <li>Honorable Mention, MCM, captain, 2024.</li>
+          </ul>
+        </>
+      )
+    }
+
+    <h2>{t.cv.contactTitle}</h2>
+    <p>
+      Email: <a href="mailto:liyihan.xyz@gmail.com">liyihan.xyz@gmail.com</a><br />
+      GitHub: <a href="https://github.com/HY-LiYihan">HY-LiYihan</a><br />
+      Google Scholar: <a href="https://scholar.google.com/citations?hl=en&user=Hmkl-ScAAAAJ">Profile</a><br />
+      {t.oldSite}: <a href="https://liyihan.xyz">liyihan.xyz</a>
+    </p>
+  </section>
+</BaseLayout>
