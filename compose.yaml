@@ -4,4 +4,9 @@ services:
     image: liyihan-net:local
     ports:
       - "8080:80"
+    environment:
+      LIYIHAN_CONTENT_DIR: /content
+      LIYIHAN_REFRESH_TOKEN: change-me-local
+    volumes:
+      - ./src/content:/content:ro
     restart: unless-stopped

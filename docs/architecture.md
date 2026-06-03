@@ -11,12 +11,12 @@
 - Blog / Notes。
 - 视频、链接、图表、交互 demo、小程序等增强内容。
 
-核心要求是：内容应尽量以 Markdown / MDX 写作，站点应易于部署，且不需要维护数据库或复杂后台系统。
+核心要求是：内容应尽量以 Markdown / MDX 写作，站点应易于部署，且不需要维护数据库或复杂后台系统。后续维护按两仓库模型推进：站点实现和长期内容分离。
 
 ## 推荐技术栈
 
 ```text
-Content:    Markdown / MDX / BibTeX
+Content:    External Markdown / MDX / BibTeX repository
 Framework:  Astro
 Theme:      Astro Scholar 或 Astro Academia
 Search:     Pagefind
@@ -26,6 +26,17 @@ Hosting:    Docker + Nginx
 ```
 
 ## 分层说明
+
+### 0. 仓库边界
+
+推荐维护两个仓库：
+
+```text
+HY-LiYihan/liyihan-net-site
+HY-LiYihan/liyihan-net-content
+```
+
+`liyihan-net-site` 保存 Astro 代码、组件、样式、Docker 和 CI/CD。`liyihan-net-content` 保存 Markdown / MDX、CV、论文、项目、图片和 PDF。站点仓库通过 `LIYIHAN_CONTENT_DIR` 读取外部内容目录。
 
 ### 1. 内容层
 
@@ -37,6 +48,8 @@ Hosting:    Docker + Nginx
 - `.mdx`：需要嵌入组件、视频、交互 demo 的增强文章。
 - `.bib`：论文条目，用于自动生成 Publications 页面。
 - 图片、视频封面、PDF、项目截图等静态资产。
+
+在两仓库模式下，内容层不再属于站点源码仓库。站点仓库只保留少量过渡样例或测试内容，生产内容从挂载的内容仓库读取。
 
 ### 2. 组件层
 
@@ -74,16 +87,18 @@ MDX 的价值在这里最明显：文章本身仍然像 Markdown 一样写，但
 
 ### 4. 构建层
 
-Astro 在构建时会把内容、组件和页面组合成静态文件：
+Astro 在构建时会把外部内容、组件和页面组合成静态文件：
 
 ```text
-src/ + content/ + public/
+liyihan-net-content/
+        +
+liyihan-net-site/src/
         |
         v
-    astro build
+LIYIHAN_CONTENT_DIR=/content astro build
         |
         v
-      dist/
+dist/
 ```
 
 `dist/` 中是最终部署产物，通常包括 HTML、CSS、JS、图片和搜索索引。
@@ -92,7 +107,7 @@ src/ + content/ + public/
 
 部署层不运行 Astro 开发服务器，而是只托管构建后的静态文件。
 
-推荐方式：
+推荐基础方式：
 
 ```text
 Docker build
@@ -103,6 +118,8 @@ Docker build
 ```
 
 最终线上运行的是一个 Nginx 容器，不需要数据库。
+
+两仓库目标形态中，Docker 镜像只随 `liyihan-net-site` 更新；`liyihan-net-content` 作为目录挂载。内容变更后，刷新入口在容器内重新执行 Astro build 和 Pagefind，更新静态产物，但不重建 Docker 镜像。
 
 ## 为什么不是 Ghost / Halo / WordPress
 
@@ -118,10 +135,13 @@ Astro 的优势是：本地写作、Git 管理、静态构建、轻量部署。
 ## 推荐总体流程
 
 ```text
-Write MD / MDX / BibTeX
+Write MD / MDX / BibTeX in content repo
         |
         v
-Astro theme renders pages
+Mount content repo into site container
+        |
+        v
+Astro renders pages
         |
         v
 astro build generates dist/
@@ -132,4 +152,3 @@ Docker image packages dist/
         v
 Nginx serves liyihan.net
 ```
-

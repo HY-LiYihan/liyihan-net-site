@@ -1,0 +1,82 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { isLang, languages, type Lang } from "../../i18n";
+
+export function getStaticPaths() {
+  return languages.map((lang) => ({ params: { lang } }));
+}
+
+const lang: Lang = isLang(Astro.params.lang) ? Astro.params.lang : "en";
+const copy = {
+  en: {
+    eyebrow: "Admin",
+    title: "Content Refresh",
+    lede: "Rebuild the static site from the mounted content repository.",
+    token: "Refresh token",
+    button: "Refresh content",
+    idle: "Ready",
+    running: "Refreshing...",
+    ok: "Refresh completed.",
+    failed: "Refresh failed.",
+  },
+  zh: {
+    eyebrow: "管理",
+    title: "内容刷新",
+    lede: "从挂载的内容仓库重新构建静态站点。",
+    token: "刷新令牌",
+    button: "刷新内容",
+    idle: "就绪",
+    running: "正在刷新...",
+    ok: "刷新完成。",
+    failed: "刷新失败。",
+  },
+}[lang];
+---
+
+<BaseLayout lang={lang} title={copy.title} description={copy.lede}>
+  <section class="section prose">
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.title}</h1>
+    <p class="lede">{copy.lede}</p>
+
+    <form class="admin-form" id="refresh-form">
+      <label>
+        <span>{copy.token}</span>
+        <input id="refresh-token" name="token" type="password" autocomplete="current-password" required />
+      </label>
+      <button class="button primary" type="submit">{copy.button}</button>
+    </form>
+
+    <p class="meta" id="refresh-status">{copy.idle}</p>
+  </section>
+
+  <script is:inline define:vars={{ copy }}>
+    const form = document.getElementById("refresh-form");
+    const token = document.getElementById("refresh-token");
+    const status = document.getElementById("refresh-status");
+
+    form?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const button = form.querySelector("button");
+      button.disabled = true;
+      status.textContent = copy.running;
+
+      try {
+        const response = await fetch("/api/refresh", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Refresh-Token": token.value,
+          },
+          body: JSON.stringify({}),
+        });
+        const data = await response.json();
+        status.textContent = data.ok ? copy.ok : `${copy.failed} ${data.error || ""}`;
+      } catch (error) {
+        status.textContent = `${copy.failed} ${error instanceof Error ? error.message : ""}`;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</BaseLayout>

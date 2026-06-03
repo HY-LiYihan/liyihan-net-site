@@ -51,8 +51,8 @@ date: 2026-06-03
 tags: ["research", "visualization"]
 ---
 
-import YouTube from "../components/YouTube.astro";
-import InteractiveDemo from "../components/InteractiveDemo.tsx";
+import YouTube from "@components/YouTube.astro";
+import InteractiveDemo from "@components/InteractiveDemo.tsx";
 
 # A Research Project
 
@@ -71,7 +71,7 @@ This page describes a research project.
 
 ## 建议内容目录
 
-如果使用 Astro 的内容集合，可以采用类似结构：
+如果内容仍放在站点仓库内，可以采用类似结构：
 
 ```text
 src/
@@ -101,6 +101,32 @@ src/
 ```
 
 实际目录应优先遵循所选主题的约定。如果使用 Astro Scholar，应先保留主题默认结构，再逐步迁移内容。
+
+如果采用两仓库模型，内容仓库建议直接以集合目录作为顶层结构：
+
+```text
+liyihan-net-content/
+  blog/
+    astro-mdx-docker.mdx
+    research-note.md
+  projects/
+    topovisnav.mdx
+    multilingual-corpus-lab.md
+  publications/
+    omnitrav.md
+    static-academic-websites.mdx
+  pages/
+    cv.md
+    about.md
+  assets/
+    images/
+    papers/
+    videos/
+  bibliography/
+    publications.bib
+```
+
+站点仓库通过 `LIYIHAN_CONTENT_DIR=/path/to/liyihan-net-content` 读取这些集合。MDX 中引用站点组件时应使用 `@components/...` 这类稳定别名，不要使用依赖文件相对位置的 `../../components/...`。
 
 ## Frontmatter 建议
 
@@ -154,4 +180,3 @@ MDX 可以支持这些常见嵌入：
 3. 最后迁移 Blog / Notes。
 4. 对需要视频、demo、图表的文章使用 `.mdx`。
 5. 对纯文本文章继续使用 `.md`。
-

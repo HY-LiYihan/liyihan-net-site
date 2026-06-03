@@ -1,11 +1,12 @@
 {
-  "name": "liyihan-net",
+  "name": "liyihan-net-site",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build && pagefind --site dist",
+    "build": "node scripts/build-site.mjs",
+    "publish": "node scripts/publish-site.mjs",
     "preview": "astro preview --host 0.0.0.0",
     "check": "astro check",
     "pagefind": "pagefind --site dist"
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@types/node": "^24.12.4",
     "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3",
     "typescript": "^6.0.3"

@@ -1,6 +1,13 @@
+import path from "node:path";
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+
+const contentRoot = process.env.LIYIHAN_CONTENT_DIR
+  ? path.resolve(process.env.LIYIHAN_CONTENT_DIR)
+  : path.resolve("./src/content");
+
+const collectionBase = (name: string) => path.join(contentRoot, name);
 
 const shared = z.object({
   title: z.string(),
@@ -17,7 +24,7 @@ const shared = z.object({
 const blog = defineCollection({
   loader: glob({
     pattern: "**/*.{md,mdx}",
-    base: "./src/content/blog",
+    base: collectionBase("blog"),
     generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
   }),
   schema: shared.extend({
@@ -28,7 +35,7 @@ const blog = defineCollection({
 const projects = defineCollection({
   loader: glob({
     pattern: "**/*.{md,mdx}",
-    base: "./src/content/projects",
+    base: collectionBase("projects"),
     generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
   }),
   schema: shared.extend({
@@ -42,7 +49,7 @@ const projects = defineCollection({
 const publications = defineCollection({
   loader: glob({
     pattern: "**/*.{md,mdx}",
-    base: "./src/content/publications",
+    base: collectionBase("publications"),
     generateId: ({ entry }) => entry.replace(/\.(md|mdx)$/, ""),
   }),
   schema: z.object({
