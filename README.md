@@ -110,7 +110,7 @@ docker build -t liyihan-net:local .
 运行容器：
 
 ```bash
-docker run --rm -p 8888:80 \
+docker run --rm -p 6399:80 \
   -e LIYIHAN_CONTENT_DIR=/content \
   -e LIYIHAN_REFRESH_TOKEN=change-me \
   -e SITE_DOMAIN=liyihan.net \
@@ -121,14 +121,14 @@ docker run --rm -p 8888:80 \
 访问：
 
 ```text
-http://localhost:8888
+http://localhost:6399
 ```
 
 正式内容入口为：
 
 ```text
-http://localhost:8888/en/
-http://localhost:8888/zh/
+http://localhost:6399/en/
+http://localhost:6399/zh/
 ```
 
 根路径 `/` 会自动选择默认语言：部署在 Cloudflare 后面时，Nginx 会优先读取 `CF-IPCountry` 请求头；没有该头时，根页面会用客户端 IP 地理位置 API 和浏览器语言作为兜底。
@@ -140,13 +140,13 @@ cp .env.example .env
 docker compose up -d
 ```
 
-默认 Compose 会把网站发布到宿主机 `8888` 端口：
+默认 Compose 会把网站发布到宿主机 `6399` 端口：
 
 ```text
-http://server-ip:8888
+http://server-ip:6399
 ```
 
-在 1Panel 里把 `liyihan.net` 反向代理到 `127.0.0.1:8888` 即可。
+在 1Panel 里把 `liyihan.net` 反向代理到 `127.0.0.1:6399` 即可。
 
 ## 远端镜像部署
 
@@ -169,7 +169,7 @@ docker compose up -d
 
 ```bash
 docker pull ghcr.io/hy-liyihan/liyihan-net-site:latest
-docker run -d --name liyihan-net --restart unless-stopped -p 8888:80 \
+docker run -d --name liyihan-net --restart unless-stopped -p 6399:80 \
   -e LIYIHAN_CONTENT_DIR=/content \
   -e LIYIHAN_REFRESH_TOKEN=change-me \
   -e SITE_DOMAIN=liyihan.net \

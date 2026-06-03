@@ -169,7 +169,7 @@ services:
     image: ghcr.io/hy-liyihan/liyihan-net-site:latest
     platform: ${LIYIHAN_PLATFORM:-linux/amd64}
     ports:
-      - "${LIYIHAN_PORT:-8888}:80"
+      - "${LIYIHAN_PORT:-6399}:80"
     environment:
       LIYIHAN_CONTENT_DIR: /content
       LIYIHAN_REFRESH_TOKEN: ${LIYIHAN_REFRESH_TOKEN}
@@ -200,7 +200,7 @@ git -C content pull
 接口调用示例：
 
 ```bash
-curl -X POST http://localhost:8888/api/refresh \
+curl -X POST http://localhost:6399/api/refresh \
   -H "X-Refresh-Token: replace-with-a-long-random-token"
 ```
 

@@ -27,7 +27,7 @@ cp .env.example .env
 编辑 `.env`：
 
 ```env
-LIYIHAN_PORT=8888
+LIYIHAN_PORT=6399
 LIYIHAN_PLATFORM=linux/amd64
 SITE_DOMAIN=liyihan.net
 LIYIHAN_REFRESH_TOKEN=replace-with-a-long-random-token
@@ -42,14 +42,14 @@ docker compose up -d
 访问：
 
 ```text
-http://server-ip:8888
+http://server-ip:6399
 ```
 
 然后在 1Panel 中新建反向代理：
 
 ```text
 Domain: liyihan.net
-Upstream: http://127.0.0.1:8888
+Upstream: http://127.0.0.1:6399
 ```
 
 容器内部 Nginx 会使用 `SITE_DOMAIN` 作为 `server_name`。如果前面有 1Panel / OpenResty / Nginx 反代，真正的 HTTPS 和证书交给 1Panel 管理即可。
@@ -78,7 +78,7 @@ npm run preview
 
 ```bash
 docker build -t liyihan-net .
-docker run --rm -p 8888:80 \
+docker run --rm -p 6399:80 \
   -e LIYIHAN_CONTENT_DIR=/content \
   -e LIYIHAN_REFRESH_TOKEN=change-me \
   -e SITE_DOMAIN=liyihan.net \
@@ -89,7 +89,7 @@ docker run --rm -p 8888:80 \
 然后访问：
 
 ```text
-http://localhost:8888
+http://localhost:6399
 ```
 
 ## 可选 Nginx 配置
@@ -128,7 +128,7 @@ services:
     container_name: liyihan-net
     platform: ${LIYIHAN_PLATFORM:-linux/amd64}
     ports:
-      - "${LIYIHAN_PORT:-8888}:80"
+      - "${LIYIHAN_PORT:-6399}:80"
     environment:
       LIYIHAN_CONTENT_DIR: /content
       LIYIHAN_REFRESH_TOKEN: ${LIYIHAN_REFRESH_TOKEN:-change-me}
@@ -162,7 +162,7 @@ services:
     image: ghcr.io/hy-liyihan/liyihan-net-site:latest
     platform: ${LIYIHAN_PLATFORM:-linux/amd64}
     ports:
-      - "${LIYIHAN_PORT:-8888}:80"
+      - "${LIYIHAN_PORT:-6399}:80"
     environment:
       LIYIHAN_CONTENT_DIR: /content
       LIYIHAN_REFRESH_TOKEN: ${LIYIHAN_REFRESH_TOKEN}
@@ -182,7 +182,7 @@ git -C content pull
 然后通过 `/en/admin/` 或 `/zh/admin/` 的刷新按钮触发容器内重新执行构建。也可以直接调用接口：
 
 ```bash
-curl -X POST http://localhost:8888/api/refresh \
+curl -X POST http://localhost:6399/api/refresh \
   -H "X-Refresh-Token: replace-with-a-long-random-token"
 ```
 
@@ -206,7 +206,7 @@ ghcr.io/hy-liyihan/liyihan-net-site
 
 ```bash
 docker pull ghcr.io/hy-liyihan/liyihan-net-site:latest
-docker run -d --name liyihan-net --restart unless-stopped -p 8888:80 \
+docker run -d --name liyihan-net --restart unless-stopped -p 6399:80 \
   -e LIYIHAN_CONTENT_DIR=/content \
   -e LIYIHAN_REFRESH_TOKEN=replace-with-a-long-random-token \
   -e SITE_DOMAIN=liyihan.net \
@@ -222,7 +222,7 @@ services:
     image: ghcr.io/hy-liyihan/liyihan-net-site:latest
     platform: ${LIYIHAN_PLATFORM:-linux/amd64}
     ports:
-      - "${LIYIHAN_PORT:-8888}:80"
+      - "${LIYIHAN_PORT:-6399}:80"
     environment:
       LIYIHAN_CONTENT_DIR: /content
       LIYIHAN_REFRESH_TOKEN: ${LIYIHAN_REFRESH_TOKEN}
