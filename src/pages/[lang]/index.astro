@@ -4,6 +4,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import ContentCard from "../../components/ContentCard.astro";
 import LinkButton from "../../components/LinkButton.astro";
 import { entrySlug, formatDate, isLang, languages, ui } from "../../i18n";
+import { getSiteImages, getSiteLocale } from "../../site-config";
 
 export function getStaticPaths() {
   return languages.map((lang) => ({ params: { lang } }));
@@ -11,6 +12,8 @@ export function getStaticPaths() {
 
 const lang = isLang(Astro.params.lang) ? Astro.params.lang : "en";
 const t = ui[lang];
+const site = getSiteLocale(lang);
+const images = getSiteImages();
 const projects = (await getCollection("projects"))
   .filter((entry) => !entry.data.draft && entry.data.featured && entry.data.lang === lang)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -24,24 +27,24 @@ const publications = (await getCollection("publications"))
 <BaseLayout lang={lang}>
   <section class="section hero">
     <div>
-      <p class="eyebrow">{t.hero.eyebrow}</p>
-      <h1>{t.hero.title}</h1>
-      <p class="lede">{t.hero.lede}</p>
+      <p class="eyebrow">{site.heroEyebrow}</p>
+      <h1>{site.heroTitle}</h1>
+      <p class="lede">{site.heroLede}</p>
       <div class="button-row">
-        <LinkButton href={`/${lang}/cv/`} label={t.hero.primary} primary />
-        <LinkButton href={`/${lang}/projects/`} label={t.hero.secondary} />
+        <LinkButton href={`/${lang}/cv/`} label={site.heroPrimary} primary />
+        <LinkButton href={`/${lang}/projects/`} label={site.heroSecondary} />
       </div>
     </div>
     <aside class="hero-visual" aria-label="Research profile visual">
-      <img class="hero-avatar" src="/images/old-site/profile.png" alt="Yihan Li profile image" />
-      <img src="/images/research-workspace.svg" alt="Abstract research workspace with corpus nodes, charts, and interface panels" />
+      {images.avatar && <img class="hero-avatar" src={images.avatar} alt="" />}
+      {images.hero && <img src={images.hero} alt={images.heroAlt} />}
     </aside>
   </section>
 
   <section class="section" style="padding-top: 0;">
     <div class="panel">
-      <h2>{t.hero.focusTitle}</h2>
-      <p>{t.hero.focusBody}</p>
+      <h2>{site.heroFocusTitle}</h2>
+      <p>{site.heroFocusBody}</p>
       <div class="tag-row">
         {t.skills.map((skill) => <span class="tag">{skill}</span>)}
       </div>

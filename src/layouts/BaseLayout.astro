@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { defaultLang, switchLangPath, type Lang, ui } from "../i18n";
+import { getSiteImages, getSiteLocale, getThemeStyle } from "../site-config";
 
 interface Props {
   title?: string;
@@ -15,14 +16,17 @@ const {
 } = Astro.props;
 
 const t = ui[lang];
-const pageTitle = title ? `${title} | ${t.siteTitle}` : t.siteTitle;
-const pageDescription = description ?? t.description;
+const site = getSiteLocale(lang);
+const images = getSiteImages();
+const themeStyle = getThemeStyle() || undefined;
+const pageTitle = title ? `${title} | ${site.siteTitle}` : site.siteTitle;
+const pageDescription = description ?? site.description;
 const otherLang = lang === "en" ? "zh" : "en";
 const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang={t.htmlLang}>
+<html lang={t.htmlLang} style={themeStyle}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -39,8 +43,11 @@ const currentPath = Astro.url.pathname;
       <header class="site-header">
         <nav class="nav" aria-label="Primary navigation">
           <a class="brand" href={`/${lang}/`}>
-            <span>{t.brand}</span>
-            <small>{t.subtitle}</small>
+            {images.logo && <img class="brand-logo" src={images.logo} alt="" />}
+            <span>
+              <strong>{site.brand}</strong>
+              <small>{site.subtitle}</small>
+            </span>
           </a>
           <div class="nav-links">
             <a href={`/${lang}/cv/`}>{t.nav.cv}</a>
@@ -57,8 +64,8 @@ const currentPath = Astro.url.pathname;
       </main>
       <footer class="site-footer">
         <div class="footer-inner">
-          <span>© {new Date().getFullYear()} {t.fullName} / {t.nativeName}</span>
-          <span>{t.footer}</span>
+          <span>© {new Date().getFullYear()} {site.fullName} / {site.nativeName}</span>
+          <span>{site.footer}</span>
         </div>
       </footer>
     </div>

@@ -124,9 +124,12 @@ liyihan-net-content/
     videos/
   bibliography/
     publications.bib
+  site.config.json
 ```
 
 站点仓库通过 `LIYIHAN_CONTENT_DIR=/path/to/liyihan-net-content` 读取这些集合。MDX 中引用站点组件时应使用 `@components/...` 这类稳定别名，不要使用依赖文件相对位置的 `../../components/...`。
+
+`site.config.json` 用于配置站点名称、logo、首页主图、首页文案和主题 CSS 变量。内容仓库里的 `assets/` 会在刷新时发布到 `/assets/`，所以 logo 和首页图通常写成 `/assets/images/...`。
 
 ## Frontmatter 建议
 

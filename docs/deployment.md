@@ -164,7 +164,7 @@ curl -X POST http://localhost:8080/api/refresh \
   -H "X-Refresh-Token: replace-with-a-long-random-token"
 ```
 
-这个步骤会重新生成 Astro 静态页面和 Pagefind 索引，并把内容仓库的 `assets/` 复制到站点的 `/assets/`。构建结果先进入临时目录，成功后再替换 Nginx 静态目录；构建失败时旧站点继续可用。
+这个步骤会重新读取 `site.config.json`，重新生成 Astro 静态页面和 Pagefind 索引，并把内容仓库的 `assets/` 复制到站点的 `/assets/`。构建结果先进入临时目录，成功后再替换 Nginx 静态目录；构建失败时旧站点继续可用。
 
 刷新接口必须设置 `LIYIHAN_REFRESH_TOKEN`。未设置 token 时，刷新服务会拒绝请求，避免公网用户触发构建。
 

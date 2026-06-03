@@ -20,7 +20,7 @@ HY-LiYihan/liyihan-net-content
 ```
 
 - `liyihan-net-site`：只保存 Astro 页面实现、组件、样式、Dockerfile、CI/CD、搜索和部署脚本。
-- `liyihan-net-content`：只保存 Markdown / MDX、CV、Publications、Projects、Blog、PDF、图片、视频封面和 BibTeX 等内容资产。
+- `liyihan-net-content`：保存 Markdown / MDX、CV、Publications、Projects、Blog、PDF、图片、视频封面、BibTeX，以及 `site.config.json` 站点设置。
 
 站点代码已经支持通过 `LIYIHAN_CONTENT_DIR` 指向外部内容目录。默认仍读取本仓库的 `src/content/`，接入内容仓库时可以这样运行：
 
@@ -145,6 +145,8 @@ docker run -d --name liyihan-net --restart unless-stopped -p 8080:80 \
 ```
 
 内容仓库更新后，进入 `/en/admin/` 或 `/zh/admin/` 输入 `LIYIHAN_REFRESH_TOKEN` 触发刷新。刷新会在容器内重新执行 Astro 构建和 Pagefind，并原子替换 Nginx 静态目录，不需要重建 Docker 镜像。
+
+内容仓库的 `site.config.json` 可以切换网站名称、logo、首页头像、首页主图、首页文案和主题 CSS 变量。
 
 ## 文档结构
 

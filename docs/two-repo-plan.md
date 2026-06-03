@@ -45,6 +45,7 @@ HY-LiYihan/liyihan-net-content
 - `pages/`：CV、About 等独立页面内容。
 - `assets/`：图片、PDF、视频封面、附件。
 - `bibliography/`：BibTeX 或其他引用数据。
+- `site.config.json`：站点名称、logo、首页图、首页文案和主题变量。
 
 这个仓库可以频繁提交和同步。内容更新不触发 Docker 镜像构建。
 
@@ -74,6 +75,53 @@ LIYIHAN_CONTENT_DIR=/path/to/liyihan-net-content npm run build
 ```
 
 当前站点代码已经支持 `LIYIHAN_CONTENT_DIR`。如果不设置这个变量，默认读取 `src/content/`，方便本地过渡和测试。
+
+## 站点配置
+
+内容仓库可以通过 `site.config.json` 控制站点级设置，不需要改站点实现仓库。
+
+支持的配置包括：
+
+- `locales.en` / `locales.zh`：网站标题、导航品牌名、副标题、描述、页脚、首页 hero 文案和按钮文案。
+- `images.logo`：顶部品牌 logo。
+- `images.avatar`：首页头像图。
+- `images.hero`：首页主视觉图。
+- `theme.variables`：CSS 变量，例如 `--bg`、`--surface`、`--text`、`--accent`、`--highlight`。
+
+示例：
+
+```json
+{
+  "locales": {
+    "en": {
+      "siteTitle": "Yihan Li Lab",
+      "brand": "Yihan Li",
+      "subtitle": "Robotics & Embodied Intelligence",
+      "heroTitle": "Yihan Li"
+    },
+    "zh": {
+      "siteTitle": "李溢涵",
+      "brand": "李溢涵",
+      "subtitle": "机器人与具身智能",
+      "heroTitle": "李溢涵"
+    }
+  },
+  "images": {
+    "logo": "/assets/images/old-site/logo.gif",
+    "avatar": "/assets/images/old-site/profile.png",
+    "hero": "/assets/images/research-workspace.svg"
+  },
+  "theme": {
+    "variables": {
+      "--bg": "#f8f7f2",
+      "--accent": "#28666e",
+      "--highlight": "#b4452d"
+    }
+  }
+}
+```
+
+图片路径建议使用 `/assets/...`，因为刷新脚本会把内容仓库的 `assets/` 发布到网站 `/assets/`。
 
 ## 更新流程
 
