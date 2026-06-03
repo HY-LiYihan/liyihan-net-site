@@ -1,93 +1,332 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { isLang, languages, type Lang, ui } from "../../i18n";
+import { isLang, languages, type Lang } from "../../i18n";
 
 export function getStaticPaths() {
   return languages.map((lang) => ({ params: { lang } }));
 }
 
 const lang: Lang = isLang(Astro.params.lang) ? Astro.params.lang : "en";
-const t = ui[lang];
+
+const cv = {
+  en: {
+    name: "Yihan Li",
+    description:
+      "Yihan Li's academic CV, including publications, internship experience, projects, awards, and skills.",
+    contacts: [
+      { label: "Phone", value: "+86 18615276438", href: "tel:+8618615276438" },
+      { label: "Email", value: "liyihan.xyz@gmail.com", href: "mailto:liyihan.xyz@gmail.com" },
+      { label: "Website", value: "liyihan.xyz", href: "https://liyihan.xyz" },
+      { label: "GitHub", value: "HY-LiYihan", href: "https://github.com/HY-LiYihan" },
+      {
+        label: "Google Scholar",
+        value: "Profile",
+        href: "https://scholar.google.com/citations?hl=en&user=Hmkl-ScAAAAJ",
+      },
+    ],
+    sections: {
+      publications: "Publications",
+      internships: "Internship Experience",
+      projects: "Project Experience",
+      awards: "Awards",
+      skills: "Skills and Other",
+    },
+    publications: [
+      {
+        title: "OmniTrav: A Dataset and Benchmark for 360° Vision-based Traversability via Foundation Models",
+        authors: "Yihan Li, Hao Ren, Zhenglan Jiang, Junzhe Zhu, Hui Cheng*",
+        venue: "IROS 2026 submitted",
+      },
+      {
+        title: "Unordered Landmark Visual Navigation",
+        authors:
+          "Hao Ren, Junzhe Zhu, Yihan Li, Zetong Bi, Le Zheng, Zhi Li, Yiqing Yuan, Zhaoliang Wan, Lu Qi, Hui Cheng",
+        venue: "ECCV 2026 submitted",
+      },
+      {
+        title:
+          "RAPID Hand: A Robust, Affordable, Perception-Integrated, Dexterous Manipulation Platform for Generalist Robot Autonomy",
+        authors:
+          "Zhaoliang Wan, Zetong Bi, Zida Zhou, Hao Ren, Yiming Zeng, Yihan Li, Lu Qi, Xu Yang, Ming-Hsuan Yang, Hui Cheng",
+        venue: "NeurIPS 2025",
+      },
+    ],
+    internships: [
+      {
+        title: "Yun Drone",
+        meta: "R&D Intern · Jun 2025 - Mar 2026",
+        bullets: [
+          "Completed hardware selection and system integration for research UAVs, including flight controllers, ESCs, sensors, and payload planning.",
+          "Ran flight stability and maneuverability tests, diagnosed control issues from flight logs, and proposed PID tuning adjustments.",
+          "Worked with the mechanical team to optimize airframe layout, electromagnetic compatibility, and vibration isolation for sensitive sensors.",
+        ],
+      },
+    ],
+    projects: [
+      {
+        title: "OmniTrav: 360° Vision-based Traversability Dataset and Benchmark",
+        meta: "First Author · Advisor: Prof. Hui Cheng · Jun 2025 - Mar 2026",
+        bullets: [
+          "Proposed a Camera-to-Traversability pipeline that maps RGB inputs from pinhole, fisheye, and panoramic cameras to 360° radial traversability distances.",
+          "Built the OmniTrav dataset with 4.7k scenes, 250k frames, and 577 GB of data, using foundation-model-assisted automatic annotation.",
+          "Outperformed ResNet-FC and DINOv3-MLP baselines across camera types, reaching panoramic obstacle-detection F1 of 1.0 and median pinhole-camera error of 0.27 m.",
+        ],
+      },
+      {
+        title: "RAPID Hand Perception-integrated Dexterous Manipulation Platform",
+        meta: "Research Assistant · Advisor: Prof. Hui Cheng · Nov 2024 - Jun 2025",
+        bullets: [
+          "Developed the low-level real-time motion-control driver for a 20-DoF anthropomorphic dexterous hand, maintaining a stable 1 kHz control loop.",
+          "Integrated wrist vision, fingertip tactile sensing, and joint proprioception, reducing the perception pipeline latency to within 7 ms.",
+          "Built a high-fidelity MuJoCo simulation and trained vision-tactile policies with Diffusion Policy for Sim2Real manipulation experiments.",
+        ],
+      },
+      {
+        title: "RoboMaster Vision System Development",
+        meta: "Deputy Captain, Advisor, Navigation and Vision Algorithm Lead · Mar 2025 - Jul 2025",
+        bullets: [
+          "Led navigation and vision algorithm planning on NVIDIA Jetson and Intel NUC platforms.",
+          "Designed an EKF-based auto-aiming system for high-speed targets and deployed YOLO armor classification with TensorRT and OpenVINO.",
+          "Implemented robust communication between the vision host and STM32 controller for precise gimbal synchronization.",
+        ],
+      },
+      {
+        title: "Autonomous Off-road Navigation and Robotic-arm Grasping System",
+        meta: "Project Lead · Mar 2025 - Jul 2025",
+        bullets: [
+          "Optimized FAST-LIO2 mapping and relocalization for degraded off-road environments using high-frequency odometry and ICP.",
+          "Improved TEB local planning for high-speed navigation and fused stereo point clouds, YOLOv11, and PnP for 6-DoF robotic-arm grasping.",
+        ],
+      },
+      {
+        title: "UAV Swarm Flight with Mesh Networking and GNSS RTK",
+        meta: "Core Member · Jul 2025 - Oct 2025",
+        bullets: [
+          "Debugged and deployed Mesh ad-hoc networking modules for real-time inter-UAV communication.",
+          "Collected and validated GNSS RTK positioning data and supported multi-UAV takeoff, trajectory tracking, and dynamic formation tests.",
+        ],
+      },
+      {
+        title: "GenreShift: Intelligent Genre Transformation with Quantitative Linguistics and LLMs",
+        meta: "Project Lead · Oct 2024 - Nov 2025",
+        bullets: [
+          "Led quasi-parallel corpus construction, data crawling and cleaning, style feature extraction, LoRA fine-tuning, and Mixture-of-Experts system design.",
+          "Coordinated the patent application for a genre transformation method and system based on quantitative linguistics and LLMs, application number 2025105553019.",
+        ],
+      },
+    ],
+    awards: [
+      "National First Prize, China Robotics and Artificial Intelligence Competition, captain, 2025.",
+      "National Champion, Intelligent Unmanned Systems Application Challenge, captain, 2025.",
+      "National Second Prize, National Undergraduate Electronics Design Contest, captain, 2025.",
+      "National Second Prize, RoboMaster University League, vision group lead, 2025.",
+      "Honorable Mention, Mathematical Contest in Modeling, captain, 2024.",
+    ],
+    skills: [
+      "Programming and robotics: ROS1/2, Python, C/C++, MATLAB, STM32, Arduino.",
+      "Engineering tools: Fusion 360, SolidWorks, EDA design.",
+      "Licenses: AOPA multirotor visual-line-of-sight pilot license, C1 driver's license.",
+      "Languages: Chinese native, English TEM-4, French.",
+      "Interests: badminton, football, cycling, FPV drones.",
+    ],
+  },
+  zh: {
+    name: "李溢涵",
+    description: "李溢涵的学术简历，包括论文、实习经历、项目经历、奖项和技能。",
+    contacts: [
+      { label: "电话", value: "+86 18615276438", href: "tel:+8618615276438" },
+      { label: "邮箱", value: "liyihan.xyz@gmail.com", href: "mailto:liyihan.xyz@gmail.com" },
+      { label: "个人网站", value: "liyihan.xyz", href: "https://liyihan.xyz" },
+      { label: "GitHub", value: "HY-LiYihan", href: "https://github.com/HY-LiYihan" },
+      {
+        label: "Google Scholar",
+        value: "Profile",
+        href: "https://scholar.google.com/citations?hl=en&user=Hmkl-ScAAAAJ",
+      },
+    ],
+    sections: {
+      publications: "学术成果",
+      internships: "实习经历",
+      projects: "项目经历",
+      awards: "荣誉奖项",
+      skills: "专业技能与其他",
+    },
+    publications: [
+      {
+        title: "OmniTrav: A Dataset and Benchmark for 360° Vision-based Traversability via Foundation Models",
+        authors: "Yihan Li, Hao Ren, Zhenglan Jiang, Junzhe Zhu, Hui Cheng*",
+        venue: "IROS 2026 submitted",
+      },
+      {
+        title: "Unordered Landmark Visual Navigation",
+        authors:
+          "Hao Ren, Junzhe Zhu, Yihan Li, Zetong Bi, Le Zheng, Zhi Li, Yiqing Yuan, Zhaoliang Wan, Lu Qi, Hui Cheng",
+        venue: "ECCV 2026 submitted",
+      },
+      {
+        title:
+          "RAPID Hand: A Robust, Affordable, Perception-Integrated, Dexterous Manipulation Platform for Generalist Robot Autonomy",
+        authors:
+          "Zhaoliang Wan, Zetong Bi, Zida Zhou, Hao Ren, Yiming Zeng, Yihan Li, Lu Qi, Xu Yang, Ming-Hsuan Yang, Hui Cheng",
+        venue: "NeurIPS 2025",
+      },
+    ],
+    internships: [
+      {
+        title: "Yun Drone",
+        meta: "研发实习生 · 2025年6月 - 2026年3月",
+        bullets: [
+          "完成科研无人机硬件选型与系统集成，确定飞控、电调、传感器配置方案并优化载荷能力。",
+          "执行飞行稳定性与机动性测试，基于飞行日志定位控制异常并提出 PID 调参建议。",
+          "协同结构团队优化机体布局，确保敏感传感器的电磁兼容与减振性能。",
+        ],
+      },
+    ],
+    projects: [
+      {
+        title: "OmniTrav：面向 360° 视觉可通行性的数据集与基准",
+        meta: "第一作者 · 合作导师：成慧 教授 · 2025年6月 - 2026年3月",
+        bullets: [
+          "提出 Camera-to-Traversability 流水线，将针孔、鱼眼、全景等相机 RGB 输入映射为 360° 径向通行距离向量。",
+          "构建 OmniTrav 数据集，包含 4.7k 场景、25 万帧和 577 GB 数据，并设计基于基础模型的自动标注流水线。",
+          "在多类相机上优于 ResNet-FC 与 DINOv3-MLP 基线，全景障碍检测 F1 达 1.0，针孔中位误差 0.27 m。",
+        ],
+      },
+      {
+        title: "RAPID Hand 感知融合灵巧手运动控制与抓取实验",
+        meta: "科研助理 · 合作导师：成慧 教授 · 2024年11月 - 2025年6月",
+        bullets: [
+          "面向自研 20 自由度仿人灵巧手，开发实时底层运动控制驱动，建立稳定的 1 kHz 控制回路。",
+          "完成腕部视觉、指尖触觉传感器与关节本体感知的同步与融合，将感知链路延迟稳定在 7 ms 以内。",
+          "搭建高保真 MuJoCo 仿真环境开展 Sim2Real 验证，并基于 Diffusion Policy 训练全手视触觉策略。",
+        ],
+      },
+      {
+        title: "RoboMaster 视觉系统开发（RMUL）",
+        meta: "25 赛季副队长；26 赛季战队指导；算法组负责人 · 2025年3月 - 2025年7月",
+        bullets: [
+          "负责战队导航与视觉算法方向规划与技术落地，在 NVIDIA Jetson 与 Intel NUC 平台开发高性能感知与控制模块。",
+          "设计并实现 EKF 自瞄系统，部署 YOLO 装甲板分类模型，并通过 TensorRT 与 OpenVINO 优化实时推理。",
+          "实现视觉主机与 STM32 控制器的稳健通信协议，在高延迟无线环境下保证云台精确同步。",
+        ],
+      },
+      {
+        title: "复杂场景越野车自主导航与机械臂精准抓取系统",
+        meta: "项目负责人 · 2025年3月 - 2025年7月",
+        bullets: [
+          "面向四驱差速与阿克曼底盘，优化 FAST-LIO2 解决退化环境建图与回环问题，并结合高频里程计与 ICP 实现重定位。",
+          "优化 TEB 局部规划器，融合双目点云、YOLOv11 与 PnP 求解，完成 6 自由度机械臂精准抓取。",
+        ],
+      },
+      {
+        title: "基于 Mesh 组网与 GNSS RTK 的无人机集群飞行",
+        meta: "核心成员 · 2025年7月 - 2025年10月",
+        bullets: [
+          "调试并部署 Mesh 自组网通信模块，建立机间实时数据链路。",
+          "采集并验证 GNSS RTK 定位数据，支撑多机协同任务，包括集群起降、轨迹跟踪和动态编队变换。",
+        ],
+      },
+      {
+        title: "GenreShift：基于计量语言学与 LLM 的智能体裁转换系统",
+        meta: "项目负责人 · 2024年10月 - 2025年11月",
+        bullets: [
+          "负责准平行语料构建、数据爬取与清洗、文体特征提取、LoRA 微调及 Mixture-of-Experts 系统搭建。",
+          "统筹项目整体规划，已申请发明专利：一种基于计量语言学与 LLM 的智能体裁转换方法及系统，申请号 2025105553019。",
+        ],
+      },
+    ],
+    awards: [
+      "国家一等奖（队长），中国机器人及人工智能大赛，2025。",
+      "全国总冠军（队长），全国智能无人系统应用挑战赛，2025。",
+      "国家二等奖（队长），全国大学生电子设计竞赛，2025。",
+      "国家二等奖（视觉组组长），RoboMaster 高校联盟赛，2025。",
+      "Honorable Mention（队长），美国大学生数学建模竞赛，2024。",
+    ],
+    skills: [
+      "编程与机器人开发：ROS1/2、Python、C/C++、MATLAB、STM32、Arduino。",
+      "工程工具：Fusion 360、SolidWorks、EDA 设计。",
+      "证书：AOPA 多旋翼视距内驾驶员执照、C1 驾照。",
+      "语言：中文母语、英语 TEM-4、法语。",
+      "兴趣：羽毛球、足球、骑行、FPV 无人机。",
+    ],
+  },
+}[lang];
 ---
 
-<BaseLayout lang={lang} title={t.cv.title} description={t.cv.lede}>
-  <section class="section prose">
-    <p class="eyebrow">{t.cv.eyebrow}</p>
-    <h1>{t.cv.title}</h1>
-    <p class="lede">{t.cv.lede}</p>
+<BaseLayout lang={lang} title={cv.name} description={cv.description}>
+  <section class="section prose cv-page">
+    <h1>{cv.name}</h1>
 
-    <h2>{t.cv.profileTitle}</h2>
-    <p>{t.cv.profile}</p>
+    <div class="cv-contact-grid" aria-label={lang === "zh" ? "联系方式" : "Contact information"}>
+      {
+        cv.contacts.map((contact) => (
+          <a href={contact.href}>
+            <span>{contact.label}</span>
+            <strong>{contact.value}</strong>
+          </a>
+        ))
+      }
+    </div>
 
-    <h2>{t.cv.educationTitle}</h2>
-    <p>{t.cv.education}</p>
+    <h2>{cv.sections.publications}</h2>
+    <div class="cv-entry-list">
+      {
+        cv.publications.map((publication) => (
+          <article class="cv-entry compact">
+            <h3>{publication.title}</h3>
+            <p>{publication.authors}</p>
+            <p class="meta">{publication.venue}</p>
+          </article>
+        ))
+      }
+    </div>
 
-    {
-      lang === "zh" ? (
-        <>
-          <h2>论文与科研</h2>
-          <ul>
-            <li>OmniTrav：360° 视觉可通行性数据集与基准，IROS 2026 submitted。</li>
-            <li>RAPID Hand：感知融合灵巧操作平台，NeurIPS 2025。</li>
-            <li>Unordered Landmark Visual Navigation，ECCV 2026 submitted。</li>
-            <li>面向学术语篇的 LLM 自动标注研究，广东省哲学社会科学规划项目 2025。</li>
-          </ul>
+    <h2>{cv.sections.internships}</h2>
+    <div class="cv-entry-list">
+      {
+        cv.internships.map((entry) => (
+          <article class="cv-entry">
+            <h3>{entry.title}</h3>
+            <p class="meta">{entry.meta}</p>
+            <ul>
+              {entry.bullets.map((bullet) => (
+                <li>{bullet}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
 
-          <h2>项目与经历</h2>
-          <ul>
-            <li>中山大学 RoboTech 机器人协会会长、竞赛队队长。</li>
-            <li>RoboMaster 视觉系统开发：EKF 自瞄、YOLO 装甲板分类、TensorRT/OpenVINO。</li>
-            <li>复杂场景越野车自主导航与机械臂精准抓取系统。</li>
-            <li>基于 Mesh 组网与 GNSS RTK 的无人机集群飞行。</li>
-            <li>GenreShift：基于计量语言学与 LLM 的智能体裁转换系统。</li>
-          </ul>
+    <h2>{cv.sections.projects}</h2>
+    <div class="cv-entry-list">
+      {
+        cv.projects.map((entry) => (
+          <article class="cv-entry">
+            <h3>{entry.title}</h3>
+            <p class="meta">{entry.meta}</p>
+            <ul>
+              {entry.bullets.map((bullet) => (
+                <li>{bullet}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
 
-          <h2>荣誉</h2>
-          <ul>
-            <li>中国机器人及人工智能大赛国家一等奖，队长，2025。</li>
-            <li>全国智能无人系统应用挑战赛全国总冠军，队长，2025。</li>
-            <li>全国大学生电子设计竞赛国家二等奖，队长，2025。</li>
-            <li>RoboMaster 高校联盟赛国家二等奖，视觉组组长，2025。</li>
-            <li>美国大学生数学建模竞赛 MCM Honorable Mention，队长，2024。</li>
-          </ul>
-        </>
-      ) : (
-        <>
-          <h2>Publications and Research</h2>
-          <ul>
-            <li>OmniTrav: 360° vision-based traversability dataset and benchmark, IROS 2026 submitted.</li>
-            <li>RAPID Hand: perception-integrated dexterous manipulation platform, NeurIPS 2025.</li>
-            <li>Unordered Landmark Visual Navigation, ECCV 2026 submitted.</li>
-            <li>LLM-assisted annotation for academic discourse, Guangdong Philosophy and Social Science Planning Project 2025.</li>
-          </ul>
+    <h2>{cv.sections.awards}</h2>
+    <ul>
+      {cv.awards.map((award) => (
+        <li>{award}</li>
+      ))}
+    </ul>
 
-          <h2>Projects and Experience</h2>
-          <ul>
-            <li>President and competition team captain, SYSU RoboTech Robotics Association.</li>
-            <li>RoboMaster vision system: EKF auto-aiming, YOLO armor classification, TensorRT/OpenVINO.</li>
-            <li>Autonomous off-road navigation and precise robotic-arm grasping in complex scenes.</li>
-            <li>UAV swarm flight with Mesh networking and GNSS RTK.</li>
-            <li>GenreShift: intelligent genre transformation with quantitative linguistics and LLMs.</li>
-          </ul>
-
-          <h2>Awards</h2>
-          <ul>
-            <li>National First Prize, China Robotics and Artificial Intelligence Competition, captain, 2025.</li>
-            <li>National Champion, Intelligent Unmanned Systems Application Challenge, captain, 2025.</li>
-            <li>National Second Prize, National Undergraduate Electronics Design Contest, captain, 2025.</li>
-            <li>National Second Prize, RoboMaster University League, vision lead, 2025.</li>
-            <li>Honorable Mention, MCM, captain, 2024.</li>
-          </ul>
-        </>
-      )
-    }
-
-    <h2>{t.cv.contactTitle}</h2>
-    <p>
-      Email: <a href="mailto:liyihan.xyz@gmail.com">liyihan.xyz@gmail.com</a><br />
-      GitHub: <a href="https://github.com/HY-LiYihan">HY-LiYihan</a><br />
-      Google Scholar: <a href="https://scholar.google.com/citations?hl=en&user=Hmkl-ScAAAAJ">Profile</a><br />
-      {t.oldSite}: <a href="https://liyihan.xyz">liyihan.xyz</a>
-    </p>
+    <h2>{cv.sections.skills}</h2>
+    <ul>
+      {cv.skills.map((skill) => (
+        <li>{skill}</li>
+      ))}
+    </ul>
   </section>
 </BaseLayout>

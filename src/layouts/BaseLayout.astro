@@ -19,7 +19,7 @@ const t = ui[lang];
 const site = getSiteLocale(lang);
 const images = getSiteImages();
 const themeStyle = getThemeStyle() || undefined;
-const pageTitle = title ? `${title} | ${site.siteTitle}` : site.siteTitle;
+const pageTitle = title && title !== site.siteTitle ? `${title} | ${site.siteTitle}` : site.siteTitle;
 const pageDescription = description ?? site.description;
 const otherLang = lang === "en" ? "zh" : "en";
 const currentPath = Astro.url.pathname;
