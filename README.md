@@ -4,7 +4,7 @@
 
 目标是把现有个人主页、CV、Publications、Projects、Blog 等内容迁移到一个轻量、可维护、可部署的静态站点中：
 
-- 内容以 Markdown / MDX 为主，方便长期写作和版本管理；后续按两仓库模型从独立内容仓库挂载进来。
+- 内容以 Markdown / MDX 为主，方便长期写作和版本管理；生产内容通过 `content/` 子模块挂载进容器。
 - 页面可嵌入视频、链接、iframe、自定义组件、CSS、JavaScript 和交互小程序。
 - 使用学术站点结构组织主页、CV、Publications、Projects、Blog 和 Search。
 - 构建结果为静态 HTML / CSS / JS，通过 Docker + Nginx 部署。
@@ -22,7 +22,7 @@ HY-LiYihan/liyihan-net-content
 - `liyihan-net-site`：只保存 Astro 页面实现、组件、样式、Dockerfile、CI/CD、搜索和部署脚本。
 - `liyihan-net-content`：保存 Markdown / MDX、CV、Publications、Projects、Blog、PDF、图片、视频封面、BibTeX，以及 `site.config.json` 站点设置。
 
-站点代码已经支持通过 `LIYIHAN_CONTENT_DIR` 指向外部内容目录。默认仍读取本仓库的 `src/content/`，接入内容仓库时可以这样运行：
+部署时推荐把 `liyihan-net-content` 作为 `liyihan-net-site` 的 `content/` 子模块，Compose 会把它只读挂载到容器内 `/content`。本地开发也可以临时指向相邻内容仓库：
 
 ```bash
 LIYIHAN_CONTENT_DIR=../liyihan-net-content npm run dev
@@ -88,6 +88,19 @@ npm run preview
 
 ## Docker 本地部署
 
+推荐部署结构是把 `liyihan-net-content` 作为本仓库的 `content/` 子模块：
+
+```bash
+git clone --recurse-submodules git@github.com:HY-LiYihan/liyihan-net-site.git
+cd liyihan-net-site
+```
+
+如果已经 clone 过：
+
+```bash
+git submodule update --init --recursive
+```
+
 构建镜像：
 
 ```bash
@@ -97,33 +110,43 @@ docker build -t liyihan-net:local .
 运行容器：
 
 ```bash
-docker run --rm -p 8080:80 \
+docker run --rm -p 8888:80 \
   -e LIYIHAN_CONTENT_DIR=/content \
   -e LIYIHAN_REFRESH_TOKEN=change-me \
-  -v "$PWD/src/content:/content:ro" \
+  -e SITE_DOMAIN=liyihan.net \
+  -v "$PWD/content:/content:ro" \
   liyihan-net:local
 ```
 
 访问：
 
 ```text
-http://localhost:8080
+http://localhost:8888
 ```
 
 正式内容入口为：
 
 ```text
-http://localhost:8080/en/
-http://localhost:8080/zh/
+http://localhost:8888/en/
+http://localhost:8888/zh/
 ```
 
 根路径 `/` 会自动选择默认语言：部署在 Cloudflare 后面时，Nginx 会优先读取 `CF-IPCountry` 请求头；没有该头时，根页面会用客户端 IP 地理位置 API 和浏览器语言作为兜底。
 
-也可以使用 Compose：
+也可以直接使用 1Panel/生产同款 Compose：
 
 ```bash
-docker compose up --build
+cp .env.example .env
+docker compose up -d
 ```
+
+默认 Compose 会把网站发布到宿主机 `8888` 端口：
+
+```text
+http://server-ip:8888
+```
+
+在 1Panel 里把 `liyihan.net` 反向代理到 `127.0.0.1:8888` 即可。
 
 ## 远端镜像部署
 
@@ -133,14 +156,24 @@ GitHub Actions 会把默认分支和版本标签构建为 Docker 镜像并发布
 ghcr.io/hy-liyihan/liyihan-net-site
 ```
 
-服务器部署时只需要拉取镜像并运行：
+服务器部署时推荐直接 clone 站点仓库，连同内容子模块一起拉下，然后启动 Compose：
+
+```bash
+git clone --recurse-submodules git@github.com:HY-LiYihan/liyihan-net-site.git
+cd liyihan-net-site
+cp .env.example .env
+docker compose up -d
+```
+
+等价的直接 `docker run` 方式：
 
 ```bash
 docker pull ghcr.io/hy-liyihan/liyihan-net-site:latest
-docker run -d --name liyihan-net --restart unless-stopped -p 8080:80 \
+docker run -d --name liyihan-net --restart unless-stopped -p 8888:80 \
   -e LIYIHAN_CONTENT_DIR=/content \
   -e LIYIHAN_REFRESH_TOKEN=change-me \
-  -v /srv/liyihan-net-content:/content:ro \
+  -e SITE_DOMAIN=liyihan.net \
+  -v "$PWD/content:/content:ro" \
   ghcr.io/hy-liyihan/liyihan-net-site:latest
 ```
 
@@ -156,7 +189,6 @@ docs/
   two-repo-plan.md
   architecture.md
   content-model.md
-  themes.md
   deployment.md
 ```
 
@@ -166,7 +198,6 @@ docs/
 - [docs/two-repo-plan.md](docs/two-repo-plan.md)：站点仓库和内容仓库的拆分计划、职责边界和更新流程。
 - [docs/architecture.md](docs/architecture.md)：整体原理、框架分层和网站结构。
 - [docs/content-model.md](docs/content-model.md)：Markdown、MDX、组件和内容组织方式。
-- [docs/themes.md](docs/themes.md)：推荐学术主题对比与选型建议。
 - [docs/deployment.md](docs/deployment.md)：Docker / Nginx 部署思路和示例。
 
 ## 为什么选择 Astro
@@ -206,5 +237,5 @@ import Demo from "@components/Demo.tsx";
 
 1. 新建并确认仓库名：`HY-LiYihan/liyihan-net-site` 和 `HY-LiYihan/liyihan-net-content`。
 2. 把长期内容迁移到 `liyihan-net-content`，保持 `blog/`、`projects/`、`publications/` 等目录结构。
-3. 让服务器 Compose 挂载内容仓库，并通过 `LIYIHAN_CONTENT_DIR` 指向挂载目录。
-4. 在服务器上 clone 两个仓库，Compose 挂载内容仓库后，通过 `/en/admin/` 或 `/zh/admin/` 刷新静态内容。
+3. 把 `liyihan-net-content` 作为 `liyihan-net-site` 的 `content/` 子模块维护。
+4. 在服务器上 `git clone --recurse-submodules` 站点仓库，Compose 挂载 `./content:/content:ro` 后，通过 `/en/admin/` 或 `/zh/admin/` 刷新静态内容。

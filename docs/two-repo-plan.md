@@ -145,27 +145,54 @@ flowchart LR
 
 ## Docker Compose 目标形态
 
-生产环境 Compose 的目标是把内容仓库作为只读目录挂载到站点容器：
+生产环境推荐把内容仓库作为站点仓库的 `content/` 子模块维护。这样服务器上只需要一个部署目录，但内容仍然属于独立 Git 仓库：
+
+```text
+liyihan-net-site/
+  compose.yaml
+  Dockerfile
+  content/                 # git submodule -> liyihan-net-content
+    blog/
+    projects/
+    publications/
+    pages/
+    assets/
+    bibliography/
+    site.config.json
+```
+
+Compose 把这个子模块目录只读挂载到站点容器：
 
 ```yaml
 services:
   liyihan-net:
     image: ghcr.io/hy-liyihan/liyihan-net-site:latest
+    platform: ${LIYIHAN_PLATFORM:-linux/amd64}
     ports:
-      - "8080:80"
+      - "${LIYIHAN_PORT:-8888}:80"
     environment:
       LIYIHAN_CONTENT_DIR: /content
-      LIYIHAN_REFRESH_TOKEN: replace-with-a-long-random-token
+      LIYIHAN_REFRESH_TOKEN: ${LIYIHAN_REFRESH_TOKEN}
+      SITE_DOMAIN: ${SITE_DOMAIN:-liyihan.net}
     volumes:
-      - /srv/liyihan-net-content:/content:ro
+      - ./content:/content:ro
     restart: unless-stopped
 ```
 
-内容仓库更新后，只需要：
+首次部署：
 
 ```bash
-cd /srv/liyihan-net-content
-git pull
+git clone --recurse-submodules git@github.com:HY-LiYihan/liyihan-net-site.git
+cd liyihan-net-site
+cp .env.example .env
+docker compose up -d
+```
+
+内容仓库更新后：
+
+```bash
+cd /path/to/liyihan-net-site
+git -C content pull
 ```
 
 然后在网站上点击刷新按钮，或调用刷新接口。站点容器不需要重新拉镜像、重建镜像或重启。
@@ -173,7 +200,7 @@ git pull
 接口调用示例：
 
 ```bash
-curl -X POST http://localhost:8080/api/refresh \
+curl -X POST http://localhost:8888/api/refresh \
   -H "X-Refresh-Token: replace-with-a-long-random-token"
 ```
 
@@ -203,6 +230,6 @@ import VideoEmbed from "../../components/VideoEmbed.astro";
 1. 在站点仓库中保留现有内容作为过渡样例，同时支持 `LIYIHAN_CONTENT_DIR`。
 2. 新建 `HY-LiYihan/liyihan-net-content`，按目录约定迁移内容。
 3. 新建或迁移站点仓库到 `HY-LiYihan/liyihan-net-site`，让 GitHub Actions 发布 `ghcr.io/hy-liyihan/liyihan-net-site`。
-4. 在服务器上 clone 内容仓库到固定目录，例如 `/srv/liyihan-net-content`。
-5. Compose 挂载内容目录到 `/content`，并设置 `LIYIHAN_CONTENT_DIR=/content`。
-6. 增加带鉴权的刷新接口和管理按钮，用于重新构建静态文件和搜索索引。
+4. 把 `liyihan-net-content` 添加为站点仓库的 `content/` 子模块。
+5. 服务器上使用 `git clone --recurse-submodules` 拉取站点仓库，Compose 挂载 `./content:/content:ro`。
+6. 使用带鉴权的刷新接口和管理按钮，用于重新构建静态文件和搜索索引。

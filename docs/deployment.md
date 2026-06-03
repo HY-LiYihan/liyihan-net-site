@@ -14,39 +14,55 @@ Build Astro project
 
 在两仓库方案中，Docker 镜像由站点仓库构建，内容仓库作为运行时目录挂载。这样内容更新不需要重新构建镜像。
 
-## 推荐 Dockerfile 模型
+## 1Panel 推荐部署
 
-```dockerfile
-FROM node:24-alpine
+推荐把内容仓库作为站点仓库的子模块：
 
-WORKDIR /app
-
-RUN apk add --no-cache nginx wget
-
-COPY package*.json ./
-RUN npm ci
-
-COPY . .
-RUN npm run build
-
-COPY nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY docker/entrypoint.sh /entrypoint.sh
-
-RUN chmod +x /entrypoint.sh \
-  && mkdir -p /usr/share/nginx/html /run/nginx /var/lib/nginx/tmp
-
-EXPOSE 80
-
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]
+```bash
+git clone --recurse-submodules git@github.com:HY-LiYihan/liyihan-net-site.git
+cd liyihan-net-site
+cp .env.example .env
 ```
 
-这个 Dockerfile 不再是纯 Nginx 运行镜像。原因是内容仓库要在容器运行时刷新，镜像必须同时具备：
+编辑 `.env`：
+
+```env
+LIYIHAN_PORT=8888
+LIYIHAN_PLATFORM=linux/amd64
+SITE_DOMAIN=liyihan.net
+LIYIHAN_REFRESH_TOKEN=replace-with-a-long-random-token
+```
+
+启动：
+
+```bash
+docker compose up -d
+```
+
+访问：
+
+```text
+http://server-ip:8888
+```
+
+然后在 1Panel 中新建反向代理：
+
+```text
+Domain: liyihan.net
+Upstream: http://127.0.0.1:8888
+```
+
+容器内部 Nginx 会使用 `SITE_DOMAIN` 作为 `server_name`。如果前面有 1Panel / OpenResty / Nginx 反代，真正的 HTTPS 和证书交给 1Panel 管理即可。
+
+## 镜像模型
+
+当前 Docker 镜像不是纯 Nginx 运行镜像。原因是内容仓库要在容器运行时刷新，镜像必须同时具备：
 
 - Node / npm / Astro / Pagefind：用于从挂载内容目录重新构建静态页面。
 - Nginx：用于对外托管最终静态文件。
 - 刷新服务：用于接收带 token 的刷新请求。
 - 原子发布脚本：构建到临时目录，成功后替换 `/usr/share/nginx/html`，失败时保留旧站点。
+- Nginx 配置模板：启动时根据 `SITE_DOMAIN` 生成容器内配置。
 
 ## 本地构建验证
 
@@ -62,17 +78,18 @@ npm run preview
 
 ```bash
 docker build -t liyihan-net .
-docker run --rm -p 8080:80 \
+docker run --rm -p 8888:80 \
   -e LIYIHAN_CONTENT_DIR=/content \
   -e LIYIHAN_REFRESH_TOKEN=change-me \
-  -v "$PWD/src/content:/content:ro" \
+  -e SITE_DOMAIN=liyihan.net \
+  -v "$PWD/content:/content:ro" \
   liyihan-net
 ```
 
 然后访问：
 
 ```text
-http://localhost:8080
+http://localhost:8888
 ```
 
 ## 可选 Nginx 配置
@@ -107,14 +124,17 @@ server {
 ```yaml
 services:
   liyihan-net:
-    build: .
+    image: ghcr.io/hy-liyihan/liyihan-net-site:latest
+    container_name: liyihan-net
+    platform: ${LIYIHAN_PLATFORM:-linux/amd64}
     ports:
-      - "8080:80"
+      - "${LIYIHAN_PORT:-8888}:80"
     environment:
       LIYIHAN_CONTENT_DIR: /content
-      LIYIHAN_REFRESH_TOKEN: change-me-local
+      LIYIHAN_REFRESH_TOKEN: ${LIYIHAN_REFRESH_TOKEN:-change-me}
+      SITE_DOMAIN: ${SITE_DOMAIN:-liyihan.net}
     volumes:
-      - ./src/content:/content:ro
+      - ./content:/content:ro
     restart: unless-stopped
 ```
 
@@ -134,33 +154,35 @@ LIYIHAN_CONTENT_DIR=../liyihan-net-content npm run dev
 LIYIHAN_CONTENT_DIR=../liyihan-net-content npm run build
 ```
 
-生产 Compose 的目标形态是：
+生产 Compose 的目标形态是当前仓库里的 `compose.yaml`：
 
 ```yaml
 services:
   liyihan-net:
     image: ghcr.io/hy-liyihan/liyihan-net-site:latest
+    platform: ${LIYIHAN_PLATFORM:-linux/amd64}
     ports:
-      - "8080:80"
+      - "${LIYIHAN_PORT:-8888}:80"
     environment:
       LIYIHAN_CONTENT_DIR: /content
-      LIYIHAN_REFRESH_TOKEN: replace-with-a-long-random-token
+      LIYIHAN_REFRESH_TOKEN: ${LIYIHAN_REFRESH_TOKEN}
+      SITE_DOMAIN: ${SITE_DOMAIN:-liyihan.net}
     volumes:
-      - /srv/liyihan-net-content:/content:ro
+      - ./content:/content:ro
     restart: unless-stopped
 ```
 
-内容更新流程：
+只更新内容仓库：
 
 ```bash
-cd /srv/liyihan-net-content
-git pull
+cd /path/to/liyihan-net-site
+git -C content pull
 ```
 
 然后通过 `/en/admin/` 或 `/zh/admin/` 的刷新按钮触发容器内重新执行构建。也可以直接调用接口：
 
 ```bash
-curl -X POST http://localhost:8080/api/refresh \
+curl -X POST http://localhost:8888/api/refresh \
   -H "X-Refresh-Token: replace-with-a-long-random-token"
 ```
 
@@ -184,10 +206,11 @@ ghcr.io/hy-liyihan/liyihan-net-site
 
 ```bash
 docker pull ghcr.io/hy-liyihan/liyihan-net-site:latest
-docker run -d --name liyihan-net --restart unless-stopped -p 8080:80 \
+docker run -d --name liyihan-net --restart unless-stopped -p 8888:80 \
   -e LIYIHAN_CONTENT_DIR=/content \
   -e LIYIHAN_REFRESH_TOKEN=replace-with-a-long-random-token \
-  -v /srv/liyihan-net-content:/content:ro \
+  -e SITE_DOMAIN=liyihan.net \
+  -v "$PWD/content:/content:ro" \
   ghcr.io/hy-liyihan/liyihan-net-site:latest
 ```
 
@@ -197,21 +220,24 @@ docker run -d --name liyihan-net --restart unless-stopped -p 8080:80 \
 services:
   liyihan-net:
     image: ghcr.io/hy-liyihan/liyihan-net-site:latest
+    platform: ${LIYIHAN_PLATFORM:-linux/amd64}
     ports:
-      - "8080:80"
+      - "${LIYIHAN_PORT:-8888}:80"
     environment:
       LIYIHAN_CONTENT_DIR: /content
-      LIYIHAN_REFRESH_TOKEN: replace-with-a-long-random-token
+      LIYIHAN_REFRESH_TOKEN: ${LIYIHAN_REFRESH_TOKEN}
+      SITE_DOMAIN: ${SITE_DOMAIN:-liyihan.net}
     volumes:
-      - /srv/liyihan-net-content:/content:ro
+      - ./content:/content:ro
     restart: unless-stopped
 ```
 
-如果在服务器上从源码部署，则流程是：
+如果更新站点实现，则流程是：
 
 ```text
 git pull
-docker compose build
+git submodule update --init --recursive
+docker compose pull
 docker compose up -d
 ```
 

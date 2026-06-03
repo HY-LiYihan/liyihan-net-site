@@ -99,6 +99,7 @@ iframe {
 .nav-links {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-end;
   gap: 6px 14px;
   font-size: 0.95rem;
@@ -111,6 +112,37 @@ iframe {
 
 .nav-links a:hover {
   color: var(--accent-strong);
+}
+
+.language-switch {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  min-width: 92px;
+  min-height: 34px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px;
+  color: var(--muted);
+  background: var(--surface);
+  text-align: center;
+}
+
+.language-switch span {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0 8px;
+  font-size: 0.82rem;
+  font-weight: 760;
+  white-space: nowrap;
+}
+
+.language-switch .active {
+  color: white;
+  background: var(--accent);
 }
 
 .main {
@@ -149,7 +181,7 @@ h3 {
 }
 
 h1 {
-  font-size: clamp(2.4rem, 7vw, 5.2rem);
+  font-size: 4.6rem;
   max-width: 10ch;
 }
 
@@ -241,7 +273,7 @@ p {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 18px;
 }
 
@@ -368,18 +400,58 @@ p {
     align-items: flex-start;
     flex-direction: column;
     padding: 18px 0;
+    gap: 16px;
   }
 
   .nav-links {
     justify-content: flex-start;
+    width: 100%;
   }
 
-  .hero,
-  .grid {
+  .hero {
     grid-template-columns: 1fr;
+    align-items: start;
+    gap: 26px;
   }
 
   .section {
     padding: 36px 0;
+  }
+
+  h1 {
+    font-size: 3.2rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .nav-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .nav-links a:not(.language-switch) {
+    min-height: 38px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 7px 9px;
+    background: var(--surface);
+  }
+
+  .language-switch {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 2.55rem;
+  }
+
+  .lede {
+    font-size: 1.04rem;
+  }
+
+  .button {
+    width: 100%;
   }
 }

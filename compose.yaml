@@ -1,12 +1,14 @@
 services:
   liyihan-net:
-    build: .
-    image: liyihan-net:local
+    image: ghcr.io/hy-liyihan/liyihan-net-site:latest
+    platform: ${LIYIHAN_PLATFORM:-linux/amd64}
+    container_name: liyihan-net
     ports:
-      - "8080:80"
+      - "${LIYIHAN_PORT:-8888}:80"
     environment:
       LIYIHAN_CONTENT_DIR: /content
-      LIYIHAN_REFRESH_TOKEN: change-me-local
+      LIYIHAN_REFRESH_TOKEN: ${LIYIHAN_REFRESH_TOKEN:-change-me}
+      SITE_DOMAIN: ${SITE_DOMAIN:-liyihan.net}
     volumes:
-      - ./src/content:/content:ro
+      - ./content:/content:ro
     restart: unless-stopped

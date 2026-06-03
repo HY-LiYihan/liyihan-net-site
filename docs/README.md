@@ -7,8 +7,7 @@
 1. [two-repo-plan.md](two-repo-plan.md)：先理解站点仓库和内容仓库如何拆分。
 2. [architecture.md](architecture.md)：再理解整体技术路线和框架分层。
 3. [content-model.md](content-model.md)：理解内容如何用 Markdown / MDX / 组件组织。
-4. [themes.md](themes.md)：选择合适的学术主题作为起点。
-5. [deployment.md](deployment.md)：最后看 Docker 和 Nginx 部署方式。
+4. [deployment.md](deployment.md)：最后看 Docker、1Panel 和 Nginx 反向代理部署方式。
 
 ## 总体结论
 

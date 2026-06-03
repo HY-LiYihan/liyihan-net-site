@@ -55,7 +55,14 @@ const currentPath = Astro.url.pathname;
             <a href={`/${lang}/projects/`}>{t.nav.projects}</a>
             <a href={`/${lang}/blog/`}>{t.nav.blog}</a>
             <a href={`/${lang}/search/`}>{t.nav.search}</a>
-            <a href={switchLangPath(currentPath, otherLang)}>{otherLang === "zh" ? "中文" : "English"}</a>
+            <a
+              class="language-switch"
+              href={switchLangPath(currentPath, otherLang)}
+              aria-label={lang === "en" ? "Switch to Chinese" : "切换到英文"}
+            >
+              <span class:list={{ active: lang === "en" }}>EN</span>
+              <span class:list={{ active: lang === "zh" }}>中文</span>
+            </a>
           </div>
         </nav>
       </header>
