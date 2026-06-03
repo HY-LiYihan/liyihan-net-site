@@ -178,6 +178,8 @@ GitHub Actions 会发布镜像：
 ghcr.io/hy-liyihan/liyihan-net-site
 ```
 
+当前 CI 先发布 `linux/amd64` 镜像。站点运行镜像包含 Node 构建依赖，用于运行时刷新内容；如果未来服务器需要 ARM，再恢复 `linux/arm64` 多架构发布并单独验证构建耗时。
+
 服务器可以直接拉取默认分支的最新镜像：
 
 ```bash
