@@ -30,6 +30,22 @@ function run(command, args, env = {}) {
   });
 }
 
+async function moveDirectory(source, destination) {
+  try {
+    await fs.rename(source, destination);
+  } catch (error) {
+    if (error.code !== "EXDEV") {
+      throw error;
+    }
+    await fs.cp(source, destination, {
+      recursive: true,
+      force: true,
+      errorOnExist: false,
+    });
+    await fs.rm(source, { recursive: true, force: true });
+  }
+}
+
 await fs.mkdir(parent, { recursive: true });
 await fs.rm(staging, { recursive: true, force: true });
 await fs.rm(backup, { recursive: true, force: true });
@@ -52,7 +68,7 @@ if (contentRoot) {
 }
 
 try {
-  await fs.rename(webRoot, backup);
+  await moveDirectory(webRoot, backup);
 } catch (error) {
   if (error.code !== "ENOENT") {
     throw error;
@@ -60,11 +76,11 @@ try {
 }
 
 try {
-  await fs.rename(staging, webRoot);
+  await moveDirectory(staging, webRoot);
   await fs.rm(backup, { recursive: true, force: true });
 } catch (error) {
   try {
-    await fs.rename(backup, webRoot);
+    await moveDirectory(backup, webRoot);
   } catch {
     // The original failure is the useful one.
   }
